@@ -1,10 +1,22 @@
 import 'package:career_bss_interview_test/core/config/app_colors.dart';
+import 'package:career_bss_interview_test/data/datasource/random_data_source.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class CsdResultPage extends StatelessWidget {
+import '../domain/entity/user.dart';
+
+final users = RemoteDataSource().mockUsers();
+
+class CsdResultPage extends StatefulWidget {
   const CsdResultPage({Key? key}) : super(key: key);
+
+  @override
+  State<CsdResultPage> createState() => _CsdResultPageState();
+}
+
+class _CsdResultPageState extends State<CsdResultPage> {
+  var userName = users[0].firstName;
 
   @override
   Widget build(BuildContext context) {
@@ -49,18 +61,21 @@ class CsdResultPage extends StatelessWidget {
                 const SizedBox(height: 20.0),
                 CarouselSlider(
                   options: CarouselOptions(
-                    height: 400.0,
-                    viewportFraction: 0.8,
-                    enlargeCenterPage: true,
-                  ),
-                  items: const [
-                    SliderImageItem(),
-                    SliderImageItem(),
-                    SliderImageItem(),
-                  ],
+                      height: 400.0,
+                      viewportFraction: 0.8,
+                      enlargeCenterPage: true,
+                      onPageChanged: (position, reason) {
+                        setState(() {
+                          print(position.toString());
+                          userName = users[position].firstName;
+                          print(userName);
+                        });
+                      }),
+                  items:
+                      users.map((user) => SliderImageItem(user: user)).toList(),
                 ),
                 const SizedBox(height: 20.0),
-                const LargeFilledButton(),
+                LargeFilledButton(userName: userName),
                 const SizedBox(height: 26.0),
                 Expanded(child: Container()),
                 const BottomBar(),
@@ -74,8 +89,11 @@ class CsdResultPage extends StatelessWidget {
 }
 
 class SliderImageItem extends StatelessWidget {
+  final User user;
+
   const SliderImageItem({
     Key? key,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -92,7 +110,7 @@ class SliderImageItem extends StatelessWidget {
             Align(
               alignment: Alignment.center,
               child: Image.network(
-                "https://i.pinimg.com/originals/cd/64/e6/cd64e64f9f2d5a896c1af9ee2953ce7f.jpg",
+                user.imageUrl,
                 height: 400.0,
                 width: 375.0,
                 fit: BoxFit.cover,
@@ -129,9 +147,9 @@ class SliderImageItem extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Text(
-                          "John Doe",
-                          style: TextStyle(
+                        Text(
+                          "${user.firstName} ${user.lastName}",
+                          style: const TextStyle(
                             fontSize: 24.0,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -141,22 +159,24 @@ class SliderImageItem extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 5.0),
-                    const Text(
-                      "Problem solver | Expert in FMCG | CSD",
-                      style: TextStyle(
+                    Text(
+                      user.about,
+                      style: const TextStyle(
                         fontSize: 16.0,
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 5.0),
-                    const Text(
-                      "Work at: Bangladesh Programming Ltd\n"
-                      "Studied from: Bangladesh University of Science\n"
-                      "From: Dhaka, Bangladesh",
-                      style: TextStyle(
+                    Text(
+                      "Work at: ${user.workplace}\n"
+                      "Studied from: ${user.studiedAt}\n"
+                      "From: ${user.location}",
+                      style: const TextStyle(
                         fontSize: 11.0,
                         color: Colors.white,
                       ),
+                      maxLines: 3,
+                      overflow: TextOverflow.fade,
                     ),
                   ],
                 ),
@@ -235,8 +255,11 @@ class AppBar extends StatelessWidget {
 }
 
 class LargeFilledButton extends StatelessWidget {
+  final String userName;
+
   const LargeFilledButton({
     Key? key,
+    required this.userName,
   }) : super(key: key);
 
   @override
@@ -255,9 +278,9 @@ class LargeFilledButton extends StatelessWidget {
           children: [
             SvgPicture.asset("assets/ic_person_pending.svg"),
             const SizedBox(width: 10.0),
-            const Text(
-              "Follow John",
-              style: TextStyle(
+            Text(
+              "Follow $userName",
+              style: const TextStyle(
                 fontSize: 20.0,
                 color: Colors.white,
               ),
