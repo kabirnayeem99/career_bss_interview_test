@@ -1,13 +1,15 @@
 import 'package:career_bss_interview_test/core/config/app_colors.dart';
 import 'package:career_bss_interview_test/data/datasource/random_data_source.dart';
-import 'package:career_bss_interview_test/ui/wallet_page.dart';
+import 'package:career_bss_interview_test/ui/app_bar.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../domain/entity/user.dart';
+import 'bottom_bar.dart';
+import 'large_filled_button.dart';
 
-final users = RemoteDataSource().mockUsers();
+final users = RemoteDataSource.mockUsers();
 
 class CsdResultPage extends StatefulWidget {
   const CsdResultPage({Key? key}) : super(key: key);
@@ -23,6 +25,7 @@ class _CsdResultPageState extends State<CsdResultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      bottomNavigationBar: const BottomBar(),
       body: Stack(
         children: [
           Align(
@@ -47,7 +50,7 @@ class _CsdResultPageState extends State<CsdResultPage> {
                   child: SvgPicture.asset("assets/ic_back_button.svg"),
                 ),
                 const SizedBox(height: 8.0),
-                const AppBar(),
+                const AppSearchBar(),
                 const SizedBox(height: 28.0),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 17.0),
@@ -77,7 +80,6 @@ class _CsdResultPageState extends State<CsdResultPage> {
                 LargeFilledButton(userName: userName),
                 const SizedBox(height: 26.0),
                 Expanded(child: Container()),
-                const BottomBar(),
               ],
             ),
           ),
@@ -182,166 +184,6 @@ class SliderImageItem extends StatelessWidget {
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class BottomBar extends StatelessWidget {
-  const BottomBar({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      height: 80.0,
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              height: 60.0,
-              color: Colors.white,
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              margin: const EdgeInsets.only(left: 67.0),
-              child: SvgPicture.asset("assets/ic_menu.svg"),
-            ),
-          ),
-          const Align(
-            alignment: Alignment.topCenter,
-            child: RoundedClippedIcon(asset: "assets/ic_home.svg"),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              margin: const EdgeInsets.only(right: 67.0),
-              child: SvgPicture.asset("assets/ic_calendar.svg"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class AppBar extends StatelessWidget {
-  const AppBar({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 17.0),
-      child: Row(
-        children: [
-          const RoundedClippedIcon(asset: "assets/ic_bell.svg"),
-          const SizedBox(width: 15.0),
-          const Expanded(child: CsdSearchBox()),
-          const SizedBox(width: 15.0),
-          GestureDetector(
-            child: const RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const WalletPage())),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LargeFilledButton extends StatelessWidget {
-  final String userName;
-
-  const LargeFilledButton({
-    Key? key,
-    required this.userName,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 60.0,
-      margin: const EdgeInsets.symmetric(horizontal: 17.0),
-      decoration: BoxDecoration(
-        color: redImperial,
-        borderRadius: BorderRadius.circular(18.0),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset("assets/ic_person_pending.svg"),
-            const SizedBox(width: 10.0),
-            Text(
-              "Follow $userName",
-              style: const TextStyle(
-                fontSize: 20.0,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RoundedClippedIcon extends StatelessWidget {
-  final String asset;
-
-  const RoundedClippedIcon({
-    Key? key,
-    required this.asset,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 45.0,
-      width: 45.0,
-      padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(45.0),
-        color: redImperial,
-      ),
-      child: SvgPicture.asset(asset),
-    );
-  }
-}
-
-class CsdSearchBox extends StatelessWidget {
-  const CsdSearchBox({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25.0),
-        border: Border.all(color: redImperial),
-      ),
-      child: TextField(
-        cursorColor: redImperial,
-        style: const TextStyle(fontSize: 12.0, color: Colors.black),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Search with keyword",
-          hintStyle: const TextStyle(fontSize: 12.0, color: Colors.black),
-          icon: SvgPicture.asset(
-            "assets/ic_search.svg",
-            color: redImperial,
-          ),
         ),
       ),
     );

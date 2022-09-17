@@ -1,16 +1,24 @@
 import 'package:career_bss_interview_test/core/config/app_colors.dart';
+import 'package:career_bss_interview_test/data/datasource/random_data_source.dart';
+import 'package:career_bss_interview_test/domain/entity/creditcard.dart';
+import 'package:career_bss_interview_test/domain/entity/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'csd_result_page.dart';
+import 'app_bar.dart';
+import 'bottom_bar.dart';
 
 class WalletPage extends StatelessWidget {
-  const WalletPage({Key? key}) : super(key: key);
+  WalletPage({Key? key}) : super(key: key);
+
+  final transactions = RemoteDataSource.mockTransactions();
+  final card = RemoteDataSource.mockCreditCard();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      bottomNavigationBar: const BottomBar(),
       body: Stack(
         children: [
           Align(
@@ -38,7 +46,7 @@ class WalletPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                const AppBar(),
+                const AppSearchBar(),
                 const SizedBox(height: 28.0),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 17.0),
@@ -51,7 +59,7 @@ class WalletPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                const Center(child: CreditCardItem()),
+                Center(child: CreditCardItem(card: card)),
                 const SizedBox(height: 16.0),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 26.0),
@@ -71,7 +79,8 @@ class WalletPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 17.0),
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 26),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 26, vertical: 0.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -86,12 +95,113 @@ class WalletPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Expanded(child: Container()),
-                const BottomBar(),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: ListView.builder(
+                    itemBuilder: (context, position) => TransactionListItem(
+                        transaction: transactions[position]),
+                    itemCount: transactions.length,
+                  ),
+                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TransactionListItem extends StatelessWidget {
+  const TransactionListItem({
+    Key? key,
+    required this.transaction,
+  }) : super(key: key);
+
+  final Transaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 26.0, right: 26.0, bottom: 15.0),
+      height: 80.0,
+      child: Stack(
+        children: [
+          SvgPicture.asset("assets/bg_transaction.svg"),
+          Align(
+            alignment: Alignment.center,
+            child: Row(
+              children: [
+                SvgPicture.asset("assets/ic_small_cut.svg"),
+                const SizedBox(width: 20.0),
+                const RoundedCashItem(),
+                const SizedBox(width: 17.0),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 160.0,
+                      child: Text(
+                        "Cash out via ${transaction.organisation}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(height: 6.0),
+                    Text(
+                      "At ${transaction.time} - ${transaction.date}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w100,
+                        fontSize: 11.0,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 17.0),
+                Text(
+                  "-${transaction.amount} BDT",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RoundedCashItem extends StatelessWidget {
+  const RoundedCashItem({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50.0,
+      width: 50.0,
+      padding: const EdgeInsets.symmetric(horizontal: 11.0, vertical: 17.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50.0),
+      ),
+      child: SvgPicture.asset(
+        "assets/ic_cash.svg",
+        height: 15.0,
+        width: 25.0,
+        fit: BoxFit.contain,
       ),
     );
   }
@@ -139,15 +249,18 @@ class ExpandedOutlinedActionButton extends StatelessWidget {
 }
 
 class CreditCardItem extends StatelessWidget {
-  const CreditCardItem({
+  CreditCardItem({
     Key? key,
+    required this.card,
   }) : super(key: key);
+
+  final CreditCard card;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(25.0),
-      child: Container(
+      child: SizedBox(
         width: 340.0,
         child: Stack(
           children: [
@@ -178,8 +291,8 @@ class CreditCardItem extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Balance",
                             style: TextStyle(
                               fontSize: 16,
@@ -188,8 +301,8 @@ class CreditCardItem extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "UC 1000",
-                            style: TextStyle(
+                            "UC ${card.balance}",
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
@@ -204,9 +317,9 @@ class CreditCardItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "John Doe",
-                            style: TextStyle(
+                          Text(
+                            card.holderName,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
@@ -215,9 +328,9 @@ class CreditCardItem extends StatelessWidget {
                           const SizedBox(height: 5),
                           Row(
                             children: [
-                              const Text(
-                                "0128 *** **** 8956",
-                                style: TextStyle(
+                              Text(
+                                card.creditCardInt,
+                                style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
@@ -234,10 +347,10 @@ class CreditCardItem extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
+                        children: [
                           Text(
-                            "12/23",
-                            style: TextStyle(
+                            card.expiryDate,
+                            style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
@@ -257,24 +370,24 @@ class CreditCardItem extends StatelessWidget {
   }
 }
 
-class AppBar extends StatelessWidget {
-  const AppBar({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 17.0),
-      child: Row(
-        children: const [
-          RoundedClippedIcon(asset: "assets/ic_bell.svg"),
-          SizedBox(width: 15.0),
-          Expanded(child: CsdSearchBox()),
-          SizedBox(width: 15.0),
-          RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
-        ],
-      ),
-    );
-  }
-}
+// class AppBar extends StatelessWidget {
+//   const AppBar({
+//     Key? key,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.symmetric(horizontal: 17.0),
+//       child: Row(
+//         children: const [
+//           RoundedClippedIcon(asset: "assets/ic_bell.svg"),
+//           SizedBox(width: 15.0),
+//           Expanded(child: CsdSearchBox()),
+//           SizedBox(width: 15.0),
+//           RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
+//         ],
+//       ),
+//     );
+//   }
+// }
