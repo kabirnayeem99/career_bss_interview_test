@@ -24,8 +24,8 @@ class RemoteDataSource {
       location: "${address.city()}, ${address.country()}",
       studiedAt: _faker.hacker.noun(),
       imageUrl: id % 2 == 0
-          ? _faker.image.unsplash.technology()
-          : _faker.image.unsplash.nature(),
+          ? _faker.image.unsplash.nature()
+          : _faker.image.unsplash.buildings(),
     );
   }
 }

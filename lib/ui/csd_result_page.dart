@@ -1,5 +1,6 @@
 import 'package:career_bss_interview_test/core/config/app_colors.dart';
 import 'package:career_bss_interview_test/data/datasource/random_data_source.dart';
+import 'package:career_bss_interview_test/ui/wallet_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -66,9 +67,7 @@ class _CsdResultPageState extends State<CsdResultPage> {
                       enlargeCenterPage: true,
                       onPageChanged: (position, reason) {
                         setState(() {
-                          print(position.toString());
                           userName = users[position].firstName;
-                          print(userName);
                         });
                       }),
                   items:
@@ -242,12 +241,16 @@ class AppBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 17.0),
       child: Row(
-        children: const [
-          RoundedClippedIcon(asset: "assets/ic_bell.svg"),
-          SizedBox(width: 15.0),
-          Expanded(child: CsdSearchBox()),
-          SizedBox(width: 15.0),
-          RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
+        children: [
+          const RoundedClippedIcon(asset: "assets/ic_bell.svg"),
+          const SizedBox(width: 15.0),
+          const Expanded(child: CsdSearchBox()),
+          const SizedBox(width: 15.0),
+          GestureDetector(
+            child: const RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const WalletPage())),
+          ),
         ],
       ),
     );
