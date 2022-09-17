@@ -46,46 +46,73 @@ class _CsdResultPageState extends State<CsdResultPage> {
               ),
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 32.0),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 17.0),
-                      child: SvgPicture.asset("assets/ic_back_button.svg"),
-                    ),
-                    const SizedBox(height: 8.0),
-                    const AppSearchBar(),
-                    const SizedBox(height: 28.0),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 17.0),
-                      child: const Text(
-                        "Results for CSD",
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w600,
-                        ),
+                //CustomScrollView(
+                //   slivers: [
+
+                //   ],
+                // )
+                child: CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 32.0),
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 17.0),
+                                child: SvgPicture.asset(
+                                    "assets/ic_back_button.svg"),
+                              ),
+                              const SizedBox(height: 8.0),
+                              const AppSearchBar(),
+                            ],
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 28.0),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 17.0),
+                                  child: const Text(
+                                    "Results for CSD",
+                                    style: TextStyle(
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20.0),
+                                CarouselSlider(
+                                  options: CarouselOptions(
+                                      height: 400.0,
+                                      viewportFraction: 0.8,
+                                      enlargeCenterPage: true,
+                                      onPageChanged: (position, reason) {
+                                        setState(() {
+                                          userName = users[position].firstName;
+                                        });
+                                      }),
+                                  items: users
+                                      .map(
+                                          (user) => SliderImageItem(user: user))
+                                      .toList(),
+                                ),
+                                const SizedBox(height: 20.0),
+                                LargeFilledButton(userName: userName),
+                                const SizedBox(height: 26.0),
+                                Expanded(child: Container()),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    CarouselSlider(
-                      options: CarouselOptions(
-                          height: 400.0,
-                          viewportFraction: 0.8,
-                          enlargeCenterPage: true,
-                          onPageChanged: (position, reason) {
-                            setState(() {
-                              userName = users[position].firstName;
-                            });
-                          }),
-                      items: users
-                          .map((user) => SliderImageItem(user: user))
-                          .toList(),
-                    ),
-                    const SizedBox(height: 20.0),
-                    LargeFilledButton(userName: userName),
-                    const SizedBox(height: 26.0),
-                    Expanded(child: Container()),
                   ],
                 ),
               ),
