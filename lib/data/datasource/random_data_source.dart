@@ -6,7 +6,7 @@ import 'package:career_bss_interview_test/domain/entity/user.dart';
 import 'package:faker_dart/faker_dart.dart';
 
 class RemoteDataSource {
-  static List<User> mockUsers() {
+  static Future<List<User>> mockUsers() async {
     return List.generate(10, (index) => mockUser(index));
   }
 
@@ -19,12 +19,12 @@ class RemoteDataSource {
     final address = faker.address;
     return User(
       id: id,
-      firstName: name.firstName(gender: Gender.male),
+      firstName: index == 0 ? "John" : name.firstName(gender: Gender.male),
       lastName: name.lastName(gender: Gender.male),
       about: faker.lorem.sentence(wordCount: 6),
       workplace: faker.company.companyName(),
       location: "${address.city()}, ${address.country()}",
-      studiedAt: faker.hacker.noun(),
+      studiedAt: "${address.state()} University",
       imageUrl: [
         "https://i.pinimg.com/originals/22/13/cd/2213cd6a06d3089cf693a6d90d4372e7.jpg",
         "https://i.pinimg.com/originals/50/37/b5/5037b503f2988b2d6d16b4e80130829b.jpg",
@@ -43,7 +43,7 @@ class RemoteDataSource {
     );
   }
 
-  static List<Transaction> mockTransactions() {
+  static Future<List<Transaction>> mockTransactions() async {
     return List.generate(3, (index) => mockTransaction());
   }
 
@@ -60,7 +60,7 @@ class RemoteDataSource {
     );
   }
 
-  static CreditCard mockCreditCard() {
+  static Future<CreditCard> mockCreditCard() async {
     final date = DateTime.now();
     final faker = Faker.instance;
 

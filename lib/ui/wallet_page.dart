@@ -11,8 +11,7 @@ import 'bottom_bar.dart';
 class WalletPage extends StatelessWidget {
   WalletPage({Key? key}) : super(key: key);
 
-  final transactions = RemoteDataSource.mockTransactions();
-  final card = RemoteDataSource.mockCreditCard();
+  // final transactions = RemoteDataSource.mockTransactions();
 
   @override
   Widget build(BuildContext context) {
@@ -32,78 +31,99 @@ class WalletPage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32.0),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 17.0),
-                    child: SvgPicture.asset("assets/ic_back_button.svg"),
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                const AppSearchBar(),
-                const SizedBox(height: 28.0),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: const Text(
-                    "My Wallet",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w600,
+          SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32.0),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 17.0),
+                      child: SvgPicture.asset("assets/ic_back_button.svg"),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20.0),
-                Center(child: CreditCardItem(card: card)),
-                const SizedBox(height: 16.0),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 26.0),
-                  child: Row(
-                    children: const [
-                      ExpandedOutlinedActionButton(
-                        asset: "assets/ic_fly.svg",
-                        label: "Cash Out",
+                  const SizedBox(height: 8.0),
+                  const AppSearchBar(),
+                  const SizedBox(height: 28.0),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 17.0),
+                    child: const Text(
+                      "My Wallet",
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.w600,
                       ),
-                      SizedBox(width: 20.0),
-                      ExpandedOutlinedActionButton(
-                        asset: "assets/ic_flag.svg",
-                        label: "Update Info",
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 17.0),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 26, vertical: 0.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Recent Transactions",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0,
+                  const SizedBox(height: 20.0),
+                  FutureBuilder<CreditCard>(
+                    builder: (context, cardSnapshot) {
+                      final card = cardSnapshot.data;
+                      return card != null
+                          ? Center(
+                              child: CreditCardItem(card: card),
+                            )
+                          : const CircularProgressIndicator();
+                    },
+                    future: RemoteDataSource.mockCreditCard(),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 26.0),
+                    child: Row(
+                      children: const [
+                        ExpandedOutlinedActionButton(
+                          asset: "assets/ic_fly.svg",
+                          label: "Cash Out",
                         ),
-                      ),
-                      SvgPicture.asset("assets/ic_sort.svg"),
-                    ],
+                        SizedBox(width: 20.0),
+                        ExpandedOutlinedActionButton(
+                          asset: "assets/ic_flag.svg",
+                          label: "Update Info",
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: ListView.builder(
-                    itemBuilder: (context, position) => TransactionListItem(
-                        transaction: transactions[position]),
-                    itemCount: transactions.length,
+                  const SizedBox(height: 17.0),
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 26, vertical: 0.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Recent Transactions",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        SvgPicture.asset("assets/ic_sort.svg"),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  FutureBuilder<List<Transaction>>(
+                    future: RemoteDataSource.mockTransactions(),
+                    builder: (context, snapshot) {
+                      final transactions = snapshot.data;
+                      return transactions != null
+                          ? ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemBuilder: (context, position) =>
+                                  TransactionListItem(
+                                      transaction: transactions[position]),
+                              itemCount: transactions.length,
+                            )
+                          : const CircularProgressIndicator();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -249,7 +269,7 @@ class ExpandedOutlinedActionButton extends StatelessWidget {
 }
 
 class CreditCardItem extends StatelessWidget {
-  CreditCardItem({
+  const CreditCardItem({
     Key? key,
     required this.card,
   }) : super(key: key);
@@ -369,25 +389,3 @@ class CreditCardItem extends StatelessWidget {
     );
   }
 }
-
-// class AppBar extends StatelessWidget {
-//   const AppBar({
-//     Key? key,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       margin: const EdgeInsets.symmetric(horizontal: 17.0),
-//       child: Row(
-//         children: const [
-//           RoundedClippedIcon(asset: "assets/ic_bell.svg"),
-//           SizedBox(width: 15.0),
-//           Expanded(child: CsdSearchBox()),
-//           SizedBox(width: 15.0),
-//           RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
-//         ],
-//       ),
-//     );
-//   }
-// }

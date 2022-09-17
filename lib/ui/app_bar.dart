@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'csd_search_box.dart';
@@ -21,8 +22,8 @@ class AppSearchBar extends StatelessWidget {
           const SizedBox(width: 15.0),
           GestureDetector(
             child: const RoundedClippedIcon(asset: "assets/ic_wallet.svg"),
-            onTap: () => Navigator.push(
-                context, MaterialPageRoute(builder: (context) => WalletPage())),
+            onTap: () => Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => WalletPage())),
           ),
         ],
       ),

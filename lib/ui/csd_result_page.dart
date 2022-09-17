@@ -9,7 +9,7 @@ import '../domain/entity/user.dart';
 import 'bottom_bar.dart';
 import 'large_filled_button.dart';
 
-final users = RemoteDataSource.mockUsers();
+final usersFuture = RemoteDataSource.mockUsers();
 
 class CsdResultPage extends StatefulWidget {
   const CsdResultPage({Key? key}) : super(key: key);
@@ -19,71 +19,79 @@ class CsdResultPage extends StatefulWidget {
 }
 
 class _CsdResultPageState extends State<CsdResultPage> {
-  var userName = users[0].firstName;
+  var userName = "John";
+  var pos = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: const BottomBar(),
-      body: Stack(
-        children: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: const EdgeInsets.only(top: 32.0),
-              child: SvgPicture.asset(
-                "assets/bg_random.svg",
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32.0),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: SvgPicture.asset("assets/ic_back_button.svg"),
-                ),
-                const SizedBox(height: 8.0),
-                const AppSearchBar(),
-                const SizedBox(height: 28.0),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: const Text(
-                    "Results for CSD",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w600,
-                    ),
+      body: FutureBuilder<List<User>>(
+        future: usersFuture,
+        builder: (context, usersSnapshot) {
+          final users = usersSnapshot.data ?? List.empty();
+          return Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 32.0),
+                  child: SvgPicture.asset(
+                    "assets/bg_random.svg",
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
                   ),
                 ),
-                const SizedBox(height: 20.0),
-                CarouselSlider(
-                  options: CarouselOptions(
-                      height: 400.0,
-                      viewportFraction: 0.8,
-                      enlargeCenterPage: true,
-                      onPageChanged: (position, reason) {
-                        setState(() {
-                          userName = users[position].firstName;
-                        });
-                      }),
-                  items:
-                      users.map((user) => SliderImageItem(user: user)).toList(),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 32.0),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 17.0),
+                      child: SvgPicture.asset("assets/ic_back_button.svg"),
+                    ),
+                    const SizedBox(height: 8.0),
+                    const AppSearchBar(),
+                    const SizedBox(height: 28.0),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 17.0),
+                      child: const Text(
+                        "Results for CSD",
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    CarouselSlider(
+                      options: CarouselOptions(
+                          height: 400.0,
+                          viewportFraction: 0.8,
+                          enlargeCenterPage: true,
+                          onPageChanged: (position, reason) {
+                            setState(() {
+                              userName = users[position].firstName;
+                            });
+                          }),
+                      items: users
+                          .map((user) => SliderImageItem(user: user))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 20.0),
+                    LargeFilledButton(userName: userName),
+                    const SizedBox(height: 26.0),
+                    Expanded(child: Container()),
+                  ],
                 ),
-                const SizedBox(height: 20.0),
-                LargeFilledButton(userName: userName),
-                const SizedBox(height: 26.0),
-                Expanded(child: Container()),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -156,6 +164,7 @@ class SliderImageItem extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         SvgPicture.asset("assets/ic_verified.svg")
                       ],
                     ),
